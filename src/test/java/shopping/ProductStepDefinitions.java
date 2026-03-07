@@ -5,6 +5,7 @@ import static org.springframework.restdocs.restassured.RestAssuredRestDocumentat
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -64,6 +65,31 @@ public class ProductStepDefinitions {
     public void iFindAllProducts() {
         context.setResponse(RestAssured.given().spec(context.documentSpec("product-find-all"))
                 .filter(document("product-find-all")).when().get("/api/products").then().extract());
+    }
+
+    @Then("the product should be created")
+    public void theProductShouldBeCreated() {
+        assertThat(context.getResponse().statusCode()).isEqualTo(201);
+    }
+
+    @Then("the product should be found")
+    public void theProductShouldBeFound() {
+        assertThat(context.getResponse().statusCode()).isEqualTo(200);
+    }
+
+    @Then("the product should be updated")
+    public void theProductShouldBeUpdated() {
+        assertThat(context.getResponse().statusCode()).isEqualTo(200);
+    }
+
+    @Then("the product should be deleted")
+    public void theProductShouldBeDeleted() {
+        assertThat(context.getResponse().statusCode()).isEqualTo(204);
+    }
+
+    @Then("the products should be found")
+    public void theProductsShouldBeFound() {
+        assertThat(context.getResponse().statusCode()).isEqualTo(200);
     }
 
     @And("the product response should have name {string}")

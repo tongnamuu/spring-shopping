@@ -53,9 +53,19 @@ public class MemberStepDefinitions {
                 .post("/api/members/login").then().extract());
     }
 
-    @Then("the response status should be {int}")
-    public void theResponseStatusShouldBe(int statusCode) {
-        assertThat(context.getResponse().statusCode()).isEqualTo(statusCode);
+    @Then("the registration should be successful")
+    public void theRegistrationShouldBeSuccessful() {
+        assertThat(context.getResponse().statusCode()).isEqualTo(201);
+    }
+
+    @Then("the login should be successful")
+    public void theLoginShouldBeSuccessful() {
+        assertThat(context.getResponse().statusCode()).isEqualTo(200);
+    }
+
+    @Then("the request should fail")
+    public void theRequestShouldFail() {
+        assertThat(context.getResponse().statusCode()).isEqualTo(400);
     }
 
     @And("the response should contain a token")
