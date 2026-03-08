@@ -4,13 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import jakarta.persistence.CollectionTable;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 import shopping.wish.Wish;
@@ -28,10 +27,9 @@ public class MemberEntity {
     @Column(nullable = false)
     private String password;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "member_wish", joinColumns = @JoinColumn(name = "member_id"))
-    @Column(name = "product_id")
-    private List<UUID> wishProductIds = new ArrayList<>();
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true,
+            fetch = FetchType.EAGER)
+    private List<WishEntity> wishes = new ArrayList<>();
 
     protected MemberEntity() {}
 
@@ -40,15 +38,16 @@ public class MemberEntity {
         entity.id = member.getId();
         entity.email = member.getEmail();
         entity.password = member.getPassword();
-        entity.wishProductIds = member.getWishes().stream().map(Wish::getProductId)
-                .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+        for (Wish wish : member.getWishes()) {
+            entity.wishes.add(new WishEntity(entity, wish.getProductId()));
+        }
         return entity;
     }
 
     public Member toDomain() {
         Member member = new Member(this.id, this.email, this.password);
-        for (UUID productId : this.wishProductIds) {
-            member.wish(productId);
+        for (WishEntity wish : this.wishes) {
+            member.wish(wish.getProductId());
         }
         return member;
     }

@@ -4,9 +4,10 @@ CREATE TABLE member (
     password VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE member_wish (
+CREATE TABLE wish (
+    id BINARY(16) PRIMARY KEY,
     member_id BINARY(16) NOT NULL,
     product_id BINARY(16) NOT NULL,
-    PRIMARY KEY (member_id, product_id),
-    FOREIGN KEY (member_id) REFERENCES member(id)
+    FOREIGN KEY (member_id) REFERENCES member(id),
+    UNIQUE (member_id, product_id)
 );
