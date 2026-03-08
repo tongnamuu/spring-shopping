@@ -11,8 +11,6 @@ public class Member {
     private Long id;
     private String email;
     private String password;
-    private long version;
-    private boolean dirty;
     private List<Wish> wishes = new ArrayList<>();
 
     public Member(Long id, String email, String password) {
@@ -33,26 +31,12 @@ public class Member {
         return email;
     }
 
-    public long getVersion() {
-        return version;
-    }
-
-    public boolean isDirty() {
-        return dirty;
-    }
-
-    public void markSaved() {
-        this.dirty = false;
-    }
-
     public List<Wish> getWishes() {
         return Collections.unmodifiableList(wishes);
     }
 
     public Member withId(Long id) {
         Member member = new Member(id, this.email, this.password);
-        member.version = this.version;
-        member.dirty = this.dirty;
         member.wishes = this.wishes;
         return member;
     }
@@ -70,17 +54,10 @@ public class Member {
         }
         Wish wish = new Wish(productId);
         wishes.add(wish);
-        markDirty();
         return wish;
     }
 
     public void removeWish(Long productId) {
         wishes.removeIf(w -> w.getProductId().equals(productId));
-        markDirty();
-    }
-
-    private void markDirty() {
-        this.dirty = true;
-        this.version++;
     }
 }
