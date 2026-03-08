@@ -9,17 +9,17 @@ import shopping.member.MemberRepository;
 public class WishConfiguration {
 
     @Bean
-    public AddWish addWish(MemberRepository memberRepository, WishRepository wishRepository) {
-        return new AddWishService(memberRepository, wishRepository);
+    public AddWish addWish(MemberRepository memberRepository) {
+        return new AddWishService(memberRepository);
     }
 
     @Bean
-    public RemoveWish removeWish(WishRepository wishRepository) {
-        return new RemoveWishService(wishRepository);
+    public RemoveWish removeWish(MemberRepository memberRepository) {
+        return new RemoveWishService(memberRepository);
     }
 
     @Bean
-    public FindWish findWish(WishRepository wishRepository) {
-        return new FindWishService(wishRepository);
+    public FindWish findWish(MemberRepository memberRepository) {
+        return new FindWishService(memberRepository);
     }
 }

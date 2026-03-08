@@ -15,10 +15,14 @@ public class InMemoryMemberRepository implements MemberRepository {
 
     @Override
     public Member save(Member member) {
-        Long id = idGenerator.getAndIncrement();
-        Member saved = member.withId(id);
-        members.put(id, saved);
-        return saved;
+        if (member.getId() == null) {
+            Long id = idGenerator.getAndIncrement();
+            Member saved = member.withId(id);
+            members.put(id, saved);
+            return saved;
+        }
+        members.put(member.getId(), member);
+        return member;
     }
 
     @Override

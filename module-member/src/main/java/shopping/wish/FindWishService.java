@@ -1,17 +1,21 @@
 package shopping.wish;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+
+import shopping.member.MemberRepository;
 
 public class FindWishService implements FindWish {
 
-    private final WishRepository wishRepository;
+    private final MemberRepository memberRepository;
 
-    public FindWishService(WishRepository wishRepository) {
-        this.wishRepository = wishRepository;
+    public FindWishService(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
     }
 
     @Override
     public List<Wish> execute(Long memberId) {
-        return wishRepository.findByMemberId(memberId);
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new NoSuchElementException("회원을 찾을 수 없습니다.")).getWishes();
     }
 }
