@@ -1,7 +1,7 @@
 package shopping.member;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class InMemoryMemberRepository implements MemberRepository {
 
-    private final Map<Long, Member> members = new HashMap<>();
+    private final Map<Long, Member> members = new ConcurrentHashMap<>();
     private final AtomicLong idGenerator = new AtomicLong(1);
 
     @Override
