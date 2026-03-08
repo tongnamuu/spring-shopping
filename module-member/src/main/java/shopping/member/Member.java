@@ -47,10 +47,6 @@ public class Member {
         return member;
     }
 
-    public void incrementVersion() {
-        this.version++;
-    }
-
     public void login(String rawPassword, PasswordEncoder passwordEncoder) {
         if (!passwordEncoder.matches(rawPassword, this.password)) {
             throw new IllegalArgumentException("이메일 또는 비밀번호가 잘못되었습니다.");
@@ -64,10 +60,12 @@ public class Member {
         }
         Wish wish = new Wish(productId);
         wishes.add(wish);
+        version++;
         return wish;
     }
 
     public void removeWish(Long productId) {
         wishes.removeIf(w -> w.getProductId().equals(productId));
+        version++;
     }
 }
