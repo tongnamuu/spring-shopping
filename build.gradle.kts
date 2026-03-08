@@ -18,6 +18,7 @@ java {
 dependencies {
     implementation(project(":module-product"))
     implementation(project(":module-member"))
+    implementation(project(":module-wish"))
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     implementation("org.springframework.boot:spring-boot-starter-validation")
