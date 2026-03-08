@@ -2,6 +2,8 @@ package shopping.wish;
 
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -57,9 +59,13 @@ public class WishController {
     public ResponseEntity<List<WishResponse>> findAll(
             @RequestHeader("Authorization") String authorization) {
         Long memberId = authenticationService.extractMemberId(authorization);
-        List<WishResponse> wishes = findWish.execute(memberId).stream()
-                .map(wish -> WishResponse.of(wish, findProduct.execute(wish.getProductId())))
-                .toList();
+        List<WishResponse> wishes = findWish.execute(memberId).stream().map(wish -> {
+            try {
+                return WishResponse.of(wish, findProduct.execute(wish.getProductId()));
+            } catch (NoSuchElementException e) {
+                return null;
+            }
+        }).filter(Objects::nonNull).toList();
         return ResponseEntity.ok(wishes);
     }
 

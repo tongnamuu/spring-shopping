@@ -25,6 +25,14 @@ Feature: Wishlist management
     When I remove the product from my wishlist
     Then the wish should be removed
 
+  Scenario: View wishlist after product is deleted
+    Given I am a registered member with email "deleted@example.com" and password "password123"
+    And a product exists with name "OldItem" price 10000 and imageUrl "https://example.com/old.png"
+    And the product is in my wishlist
+    And the product is deleted
+    When I view my wishlist
+    Then the wishlist should contain 0 product
+
   Scenario: Add duplicate product to wishlist
     Given I am a registered member with email "wish-dup@example.com" and password "password123"
     And a product exists with name "Headset" price 80000 and imageUrl "https://example.com/hs.png"

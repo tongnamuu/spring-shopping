@@ -36,6 +36,12 @@ public class WishStepDefinitions {
                 .statusCode(201);
     }
 
+    @Given("the product is deleted")
+    public void theProductIsDeleted() {
+        RestAssured.given().spec(context.spec()).when()
+                .delete("/api/products/{id}", context.getCreatedProductId()).then().statusCode(204);
+    }
+
     @When("I add the product to my wishlist")
     public void iAddTheProductToMyWishlist() {
         context.setResponse(RestAssured.given().spec(context.documentSpec("wish-add"))
