@@ -12,7 +12,7 @@ import shopping.wish.Wish;
 
 class MemberTest {
 
-    private final FakePasswordEncoder passwordEncoder = new FakePasswordEncoder();
+    private final PasswordEncoder passwordEncoder = new BcryptPasswordEncoder();
 
     @Test
     void ID_없이_생성하면_ID가_null이다() {

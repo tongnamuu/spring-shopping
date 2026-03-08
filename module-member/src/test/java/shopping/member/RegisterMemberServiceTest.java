@@ -11,12 +11,14 @@ import org.junit.jupiter.api.Test;
 class RegisterMemberServiceTest {
 
     private InMemoryMemberRepository memberRepository;
+    private PasswordEncoder passwordEncoder;
     private RegisterMemberService service;
 
     @BeforeEach
     void setUp() {
         memberRepository = new InMemoryMemberRepository();
-        service = new RegisterMemberService(memberRepository, new FakePasswordEncoder());
+        passwordEncoder = new BcryptPasswordEncoder();
+        service = new RegisterMemberService(memberRepository, passwordEncoder);
     }
 
     @Test
@@ -28,12 +30,11 @@ class RegisterMemberServiceTest {
     }
 
     @Test
-    void 비밀번호가_인코딩되어_저장된다() {
+    void 등록한_회원이_로그인할_수_있다() {
         service.execute("test@test.com", "password123");
 
         Member saved = memberRepository.findByEmail("test@test.com").orElseThrow();
-        FakePasswordEncoder encoder = new FakePasswordEncoder();
-        assertTrue(encoder.matches("password123", "encoded:password123"));
+        saved.login("password123", passwordEncoder);
     }
 
     @Test
