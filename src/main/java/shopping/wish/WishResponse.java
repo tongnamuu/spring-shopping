@@ -1,8 +1,11 @@
 package shopping.wish;
 
-public record WishResponse(Long id, Long productId) {
+import shopping.product.Product;
 
-    public static WishResponse from(Wish wish) {
-        return new WishResponse(wish.getId(), wish.getProductId());
+public record WishResponse(Long id, Long productId, String name, long price, String imageUrl) {
+
+    public static WishResponse of(Wish wish, Product product) {
+        return new WishResponse(wish.getId(), product.getId(), product.getName(),
+                product.getPrice(), product.getImageUrl());
     }
 }

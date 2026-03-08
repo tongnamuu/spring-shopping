@@ -8,6 +8,7 @@ Feature: Wishlist management
     And a product exists with name "Keyboard" price 50000 and imageUrl "https://example.com/kb.png"
     When I add the product to my wishlist
     Then the wish should be created
+    And the wish response should have product name "Keyboard"
 
   Scenario: View my wishlist
     Given I am a registered member with email "view@example.com" and password "password123"
@@ -15,6 +16,7 @@ Feature: Wishlist management
     And the product is in my wishlist
     When I view my wishlist
     Then the wishlist should contain 1 product
+    And the wishlist should have product name "Mouse"
 
   Scenario: Remove a product from wishlist
     Given I am a registered member with email "remove@example.com" and password "password123"

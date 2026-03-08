@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import shopping.member.MemberRepository;
 import shopping.member.TokenProvider;
+import shopping.product.FindProduct;
 
 @RestController
 @RequestMapping("/api/wishes")
@@ -24,14 +25,17 @@ public class WishController {
     private final AddWish addWish;
     private final RemoveWish removeWish;
     private final FindWish findWish;
+    private final FindProduct findProduct;
     private final TokenProvider tokenProvider;
     private final MemberRepository memberRepository;
 
     public WishController(AddWish addWish, RemoveWish removeWish, FindWish findWish,
-            TokenProvider tokenProvider, MemberRepository memberRepository) {
+            FindProduct findProduct, TokenProvider tokenProvider,
+            MemberRepository memberRepository) {
         this.addWish = addWish;
         this.removeWish = removeWish;
         this.findWish = findWish;
+        this.findProduct = findProduct;
         this.tokenProvider = tokenProvider;
         this.memberRepository = memberRepository;
     }
@@ -41,7 +45,8 @@ public class WishController {
             @PathVariable Long productId) {
         Long memberId = extractMemberId(authorization);
         Wish wish = addWish.execute(memberId, productId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(WishResponse.from(wish));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(WishResponse.of(wish, findProduct.execute(productId)));
     }
 
     @DeleteMapping("/{productId}")
@@ -56,8 +61,9 @@ public class WishController {
     public ResponseEntity<List<WishResponse>> findAll(
             @RequestHeader("Authorization") String authorization) {
         Long memberId = extractMemberId(authorization);
-        List<WishResponse> wishes =
-                findWish.execute(memberId).stream().map(WishResponse::from).toList();
+        List<WishResponse> wishes = findWish.execute(memberId).stream()
+                .map(wish -> WishResponse.of(wish, findProduct.execute(wish.getProductId())))
+                .toList();
         return ResponseEntity.ok(wishes);
     }
 

@@ -68,6 +68,16 @@ public class WishStepDefinitions {
         assertThat(context.getResponse().jsonPath().getList("$")).hasSize(count);
     }
 
+    @Then("the wish response should have product name {string}")
+    public void theWishResponseShouldHaveProductName(String name) {
+        assertThat(context.getResponse().jsonPath().getString("name")).isEqualTo(name);
+    }
+
+    @Then("the wishlist should have product name {string}")
+    public void theWishlistShouldHaveProductName(String name) {
+        assertThat(context.getResponse().jsonPath().getString("[0].name")).isEqualTo(name);
+    }
+
     @Then("the wish should be removed")
     public void theWishShouldBeRemoved() {
         assertThat(context.getResponse().statusCode()).isEqualTo(204);
