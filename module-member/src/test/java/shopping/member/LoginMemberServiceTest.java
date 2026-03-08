@@ -1,10 +1,7 @@
 package shopping.member;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import io.jsonwebtoken.Jwts;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,14 +9,15 @@ import org.junit.jupiter.api.Test;
 class LoginMemberServiceTest {
 
     private InMemoryMemberRepository memberRepository;
-    private PasswordEncoder passwordEncoder;
+    private FakeTokenProvider tokenProvider;
+    private FakePasswordEncoder passwordEncoder;
     private LoginMemberService service;
 
     @BeforeEach
     void setUp() {
         memberRepository = new InMemoryMemberRepository();
-        TokenProvider tokenProvider = new JwtTokenProvider(Jwts.SIG.HS256.key().build(), 3600000);
-        passwordEncoder = new BcryptPasswordEncoder();
+        tokenProvider = new FakeTokenProvider();
+        passwordEncoder = new FakePasswordEncoder();
         service = new LoginMemberService(memberRepository, tokenProvider, passwordEncoder);
     }
 
@@ -29,7 +27,7 @@ class LoginMemberServiceTest {
 
         String token = service.execute("test@test.com", "password123");
 
-        assertNotNull(token);
+        assertEquals("token:test@test.com", token);
     }
 
     @Test
