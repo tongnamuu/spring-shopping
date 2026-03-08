@@ -27,6 +27,10 @@ Feature: Product CRUD
     When I delete the product
     Then the product should be deleted
 
+  Scenario: Create a product with profanity name
+    When I create a product with name "badword" price 50000 and imageUrl "https://example.com/bad.png"
+    Then the request should fail
+
   Scenario: Find all products
     Given a product exists with name "Item1" price 10000 and imageUrl "https://example.com/1.png"
     And a product exists with name "Item2" price 20000 and imageUrl "https://example.com/2.png"

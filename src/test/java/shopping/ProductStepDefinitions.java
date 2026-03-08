@@ -33,8 +33,10 @@ public class ProductStepDefinitions {
                 .body("{\"name\":\"" + name + "\",\"price\":" + price + ",\"imageUrl\":\""
                         + imageUrl + "\"}")
                 .when().post("/api/products").then().extract());
-        Long id = context.getResponse().jsonPath().getLong("id");
-        context.setCreatedProductId(id);
+        Object id = context.getResponse().jsonPath().get("id");
+        if (id instanceof Number) {
+            context.setCreatedProductId(((Number) id).longValue());
+        }
     }
 
     @When("I find the product by id")
