@@ -3,32 +3,37 @@ package shopping.member;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import shopping.wish.Wish;
 
 public class Member {
 
-    private Long id;
+    private UUID id;
     private String email;
     private String password;
     private List<Wish> wishes = new ArrayList<>();
 
-    public Member(Long id, String email, String password) {
+    public Member(UUID id, String email, String password) {
         this.id = id;
         this.email = email;
         this.password = password;
     }
 
     public Member(String email, String password) {
-        this(null, email, password);
+        this(UUID.randomUUID(), email, password);
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
     public String getEmail() {
         return email;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public List<Wish> getWishes() {
@@ -41,7 +46,7 @@ public class Member {
         }
     }
 
-    public Wish wish(Long productId) {
+    public Wish wish(UUID productId) {
         boolean exists = wishes.stream().anyMatch(w -> w.getProductId().equals(productId));
         if (exists) {
             throw new IllegalArgumentException("이미 위시리스트에 추가된 상품입니다.");
@@ -51,7 +56,7 @@ public class Member {
         return wish;
     }
 
-    public void removeWish(Long productId) {
+    public void removeWish(UUID productId) {
         wishes.removeIf(w -> w.getProductId().equals(productId));
     }
 }
