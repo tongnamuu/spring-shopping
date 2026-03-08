@@ -21,10 +21,7 @@ public class InMemoryMemberRepository implements MemberRepository {
             members.put(id, saved);
             return saved;
         }
-        Member existing = members.get(member.getId());
-        if (existing != null && existing.getVersion() > member.getVersion()) {
-            throw new IllegalStateException("동시에 수정이 발생했습니다. 다시 시도해주세요.");
-        }
+        member.markSaved();
         members.put(member.getId(), member);
         return member;
     }
