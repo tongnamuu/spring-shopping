@@ -1,5 +1,8 @@
 package shopping.member;
 
+import shopping.wish.Wish;
+import shopping.wish.WishRepository;
+
 public class Member {
 
     private Long id;
@@ -32,5 +35,12 @@ public class Member {
         if (!passwordEncoder.matches(rawPassword, this.password)) {
             throw new IllegalArgumentException("이메일 또는 비밀번호가 잘못되었습니다.");
         }
+    }
+
+    public Wish wish(Long productId, WishRepository wishRepository) {
+        if (wishRepository.existsByMemberIdAndProductId(this.id, productId)) {
+            throw new IllegalArgumentException("이미 위시리스트에 추가된 상품입니다.");
+        }
+        return wishRepository.save(new Wish(this.id, productId));
     }
 }

@@ -22,6 +22,11 @@ public class InMemoryMemberRepository implements MemberRepository {
     }
 
     @Override
+    public Optional<Member> findById(Long id) {
+        return Optional.ofNullable(members.get(id));
+    }
+
+    @Override
     public Optional<Member> findByEmail(String email) {
         return members.values().stream().filter(m -> m.getEmail().equals(email)).findFirst();
     }
