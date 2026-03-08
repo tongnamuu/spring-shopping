@@ -14,8 +14,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import shopping.member.MemberRepository;
-import shopping.member.TokenProvider;
+import shopping.auth.AuthenticationService;
 import shopping.product.FindProduct;
 
 @RestController
@@ -26,24 +25,21 @@ public class WishController {
     private final RemoveWish removeWish;
     private final FindWish findWish;
     private final FindProduct findProduct;
-    private final TokenProvider tokenProvider;
-    private final MemberRepository memberRepository;
+    private final AuthenticationService authenticationService;
 
     public WishController(AddWish addWish, RemoveWish removeWish, FindWish findWish,
-            FindProduct findProduct, TokenProvider tokenProvider,
-            MemberRepository memberRepository) {
+            FindProduct findProduct, AuthenticationService authenticationService) {
         this.addWish = addWish;
         this.removeWish = removeWish;
         this.findWish = findWish;
         this.findProduct = findProduct;
-        this.tokenProvider = tokenProvider;
-        this.memberRepository = memberRepository;
+        this.authenticationService = authenticationService;
     }
 
     @PostMapping("/{productId}")
     public ResponseEntity<WishResponse> add(@RequestHeader("Authorization") String authorization,
             @PathVariable Long productId) {
-        Long memberId = extractMemberId(authorization);
+        Long memberId = authenticationService.extractMemberId(authorization);
         Wish wish = addWish.execute(memberId, productId);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(WishResponse.of(wish, findProduct.execute(productId)));
@@ -52,7 +48,7 @@ public class WishController {
     @DeleteMapping("/{productId}")
     public ResponseEntity<Void> remove(@RequestHeader("Authorization") String authorization,
             @PathVariable Long productId) {
-        Long memberId = extractMemberId(authorization);
+        Long memberId = authenticationService.extractMemberId(authorization);
         removeWish.execute(memberId, productId);
         return ResponseEntity.noContent().build();
     }
@@ -60,18 +56,11 @@ public class WishController {
     @GetMapping
     public ResponseEntity<List<WishResponse>> findAll(
             @RequestHeader("Authorization") String authorization) {
-        Long memberId = extractMemberId(authorization);
+        Long memberId = authenticationService.extractMemberId(authorization);
         List<WishResponse> wishes = findWish.execute(memberId).stream()
                 .map(wish -> WishResponse.of(wish, findProduct.execute(wish.getProductId())))
                 .toList();
         return ResponseEntity.ok(wishes);
-    }
-
-    private Long extractMemberId(String authorization) {
-        String token = authorization.replace("Bearer ", "");
-        String email = tokenProvider.extractEmail(token);
-        return memberRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다.")).getId();
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
