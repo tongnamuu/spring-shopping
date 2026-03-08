@@ -11,6 +11,7 @@ public class Member {
     private Long id;
     private String email;
     private String password;
+    private long version;
     private List<Wish> wishes = new ArrayList<>();
 
     public Member(Long id, String email, String password) {
@@ -31,14 +32,23 @@ public class Member {
         return email;
     }
 
+    public long getVersion() {
+        return version;
+    }
+
     public List<Wish> getWishes() {
         return Collections.unmodifiableList(wishes);
     }
 
     public Member withId(Long id) {
         Member member = new Member(id, this.email, this.password);
+        member.version = this.version;
         member.wishes = this.wishes;
         return member;
+    }
+
+    public void incrementVersion() {
+        this.version++;
     }
 
     public void login(String rawPassword, PasswordEncoder passwordEncoder) {
