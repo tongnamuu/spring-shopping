@@ -3,11 +3,11 @@ package shopping.member;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface SpringDataMemberRepository extends MongoRepository<MemberDocument, UUID> {
+public interface SpringDataMemberRepository extends JpaRepository<MemberEntity, UUID> {
 
-    Optional<MemberDocument> findByEmail(String email);
+    Optional<MemberEntity> findByEmail(String email);
 
     boolean existsByEmail(String email);
 }

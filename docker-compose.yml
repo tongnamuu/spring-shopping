@@ -1,22 +1,15 @@
 services:
-  postgres:
-    image: postgres:17
+  mysql:
+    image: mysql:8.0
     ports:
-      - "5432:5432"
+      - "3306:3306"
     environment:
-      POSTGRES_DB: shopping
-      POSTGRES_USER: shopping
-      POSTGRES_PASSWORD: shopping
+      MYSQL_DATABASE: shopping
+      MYSQL_USER: shopping
+      MYSQL_PASSWORD: shopping
+      MYSQL_ROOT_PASSWORD: root
     volumes:
-      - postgres-data:/var/lib/postgresql/data
-
-  mongodb:
-    image: mongo:7.0
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo-data:/data/db
+      - mysql-data:/var/lib/mysql
 
 volumes:
-  postgres-data:
-  mongo-data:
+  mysql-data:

@@ -6,29 +6,29 @@ import java.util.UUID;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class MongoMemberRepository implements MemberRepository {
+public class JpaMemberRepository implements MemberRepository {
 
     private final SpringDataMemberRepository repository;
 
-    public MongoMemberRepository(SpringDataMemberRepository repository) {
+    public JpaMemberRepository(SpringDataMemberRepository repository) {
         this.repository = repository;
     }
 
     @Override
     public Member save(Member member) {
-        MemberDocument document = MemberDocument.fromDomain(member);
-        MemberDocument saved = repository.save(document);
+        MemberEntity entity = MemberEntity.fromDomain(member);
+        MemberEntity saved = repository.save(entity);
         return saved.toDomain();
     }
 
     @Override
     public Optional<Member> findById(UUID id) {
-        return repository.findById(id).map(MemberDocument::toDomain);
+        return repository.findById(id).map(MemberEntity::toDomain);
     }
 
     @Override
     public Optional<Member> findByEmail(String email) {
-        return repository.findByEmail(email).map(MemberDocument::toDomain);
+        return repository.findByEmail(email).map(MemberEntity::toDomain);
     }
 
     @Override
