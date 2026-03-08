@@ -2,8 +2,6 @@ package shopping.wish;
 
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Objects;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,57 +14,34 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import shopping.auth.AuthenticationService;
-import shopping.product.FindProduct;
-
 @RestController
 @RequestMapping("/api/wishes")
 public class WishController {
 
-    private final AddWish addWish;
-    private final RemoveWish removeWish;
-    private final FindWish findWish;
-    private final FindProduct findProduct;
-    private final AuthenticationService authenticationService;
+    private final WishApplicationService wishApplicationService;
 
-    public WishController(AddWish addWish, RemoveWish removeWish, FindWish findWish,
-            FindProduct findProduct, AuthenticationService authenticationService) {
-        this.addWish = addWish;
-        this.removeWish = removeWish;
-        this.findWish = findWish;
-        this.findProduct = findProduct;
-        this.authenticationService = authenticationService;
+    public WishController(WishApplicationService wishApplicationService) {
+        this.wishApplicationService = wishApplicationService;
     }
 
     @PostMapping("/{productId}")
     public ResponseEntity<WishResponse> add(@RequestHeader("Authorization") String authorization,
             @PathVariable Long productId) {
-        Long memberId = authenticationService.extractMemberId(authorization);
-        Wish wish = addWish.execute(memberId, productId);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(WishResponse.of(wish, findProduct.execute(productId)));
+                .body(wishApplicationService.add(authorization, productId));
     }
 
     @DeleteMapping("/{productId}")
     public ResponseEntity<Void> remove(@RequestHeader("Authorization") String authorization,
             @PathVariable Long productId) {
-        Long memberId = authenticationService.extractMemberId(authorization);
-        removeWish.execute(memberId, productId);
+        wishApplicationService.remove(authorization, productId);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping
     public ResponseEntity<List<WishResponse>> findAll(
             @RequestHeader("Authorization") String authorization) {
-        Long memberId = authenticationService.extractMemberId(authorization);
-        List<WishResponse> wishes = findWish.execute(memberId).stream().map(wish -> {
-            try {
-                return WishResponse.of(wish, findProduct.execute(wish.getProductId()));
-            } catch (NoSuchElementException e) {
-                return null;
-            }
-        }).filter(Objects::nonNull).toList();
-        return ResponseEntity.ok(wishes);
+        return ResponseEntity.ok(wishApplicationService.findAll(authorization));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
