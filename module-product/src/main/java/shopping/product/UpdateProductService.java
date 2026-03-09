@@ -3,6 +3,9 @@ package shopping.product;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
+import jakarta.transaction.Transactional;
+
+@Transactional
 public class UpdateProductService implements UpdateProduct {
 
     private final ProductRepository productRepository;

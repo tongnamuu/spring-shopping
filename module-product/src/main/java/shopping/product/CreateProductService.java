@@ -1,5 +1,8 @@
 package shopping.product;
 
+import jakarta.transaction.Transactional;
+
+@Transactional
 public class CreateProductService implements CreateProduct {
 
     private final ProductRepository productRepository;
