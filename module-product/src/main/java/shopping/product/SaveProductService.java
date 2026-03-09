@@ -15,9 +15,4 @@ public class SaveProductService {
         Product product = new Product(productName, price, imageUrl);
         return productRepository.save(product);
     }
-
-    public Product execute(String name, long price, String imageUrl) {
-        Product product = new Product(name, price, imageUrl);
-        return productRepository.save(product);
-    }
 }

@@ -13,12 +13,7 @@ public class CreateProductService implements CreateProduct {
 
     @Override
     public Product execute(String name, long price, String imageUrl) {
-        productNameFactory.validate(name);
-        try {
-            ProductName productName = productNameFactory.create(name);
-            return saveProductService.execute(productName, price, imageUrl);
-        } catch (Exception e) {
-            return saveProductService.execute(name, price, imageUrl);
-        }
+        ProductName productName = productNameFactory.create(name);
+        return saveProductService.execute(productName, price, imageUrl);
     }
 }

@@ -40,29 +40,14 @@ public class Product {
         this.name = name;
         this.price = price;
         this.imageUrl = imageUrl;
-        this.status = ProductStatus.CREATED;
-    }
-
-    public Product(String name, long price, String imageUrl) {
-        this.id = UUID.randomUUID();
-        this.name = new ProductName(name);
-        this.price = price;
-        this.imageUrl = imageUrl;
-        this.status = ProductStatus.PENDING;
+        this.status = name.isVerified() ? ProductStatus.CREATED : ProductStatus.PENDING;
     }
 
     public void update(ProductName name, long price, String imageUrl) {
         this.name = name;
         this.price = price;
         this.imageUrl = imageUrl;
-        this.status = ProductStatus.CREATED;
-    }
-
-    public void update(String name, long price, String imageUrl) {
-        this.name = new ProductName(name);
-        this.price = price;
-        this.imageUrl = imageUrl;
-        this.status = ProductStatus.PENDING;
+        this.status = name.isVerified() ? ProductStatus.CREATED : ProductStatus.PENDING;
     }
 
     public UUID getId() {

@@ -14,7 +14,17 @@ public class ProductNameFactory {
         this.profanityChecker = profanityChecker;
     }
 
-    public void validate(String name) {
+    public ProductName create(String name) {
+        validate(name);
+        try {
+            boolean containsProfanity = profanityChecker.containsProfanity(name);
+            return new ProductName(name, !containsProfanity);
+        } catch (Exception e) {
+            return new ProductName(name, false);
+        }
+    }
+
+    private void validate(String name) {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("상품 이름은 필수입니다.");
         }
@@ -24,13 +34,5 @@ public class ProductNameFactory {
         if (!ALLOWED_NAME_PATTERN.matcher(name).matches()) {
             throw new IllegalArgumentException("상품 이름에 허용되지 않는 특수문자가 포함되어 있습니다.");
         }
-    }
-
-    public ProductName create(String name) {
-        validate(name);
-        if (profanityChecker.containsProfanity(name)) {
-            throw new IllegalArgumentException("상품 이름에 비속어가 포함되어 있습니다.");
-        }
-        return new ProductName(name);
     }
 }

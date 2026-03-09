@@ -1,7 +1,9 @@
 package shopping.product;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +22,7 @@ class ProductNameFactoryTest {
         ProductName name = factory.create("상품이름");
 
         assertEquals("상품이름", name.getValue());
+        assertTrue(name.isVerified());
     }
 
     @Test
@@ -27,6 +30,7 @@ class ProductNameFactoryTest {
         ProductName name = factory.create("Product (1-A)+");
 
         assertEquals("Product (1-A)+", name.getValue());
+        assertTrue(name.isVerified());
     }
 
     @Test
@@ -78,10 +82,22 @@ class ProductNameFactoryTest {
     }
 
     @Test
-    void 비속어가_포함되면_예외가_발생한다() {
-        IllegalArgumentException exception =
-                assertThrows(IllegalArgumentException.class, () -> factory.create("badword"));
+    void 비속어가_포함되면_미인증_상태로_생성된다() {
+        ProductName name = factory.create("badword");
 
-        assertEquals("상품 이름에 비속어가 포함되어 있습니다.", exception.getMessage());
+        assertEquals("badword", name.getValue());
+        assertFalse(name.isVerified());
+    }
+
+    @Test
+    void 외부_API_실패시_미인증_상태로_생성된다() {
+        ProductNameFactory failingFactory = new ProductNameFactory(text -> {
+            throw new RuntimeException("API failure");
+        });
+
+        ProductName name = failingFactory.create("상품");
+
+        assertEquals("상품", name.getValue());
+        assertFalse(name.isVerified());
     }
 }
