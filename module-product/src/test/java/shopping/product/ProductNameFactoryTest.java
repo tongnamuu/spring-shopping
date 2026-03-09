@@ -82,20 +82,16 @@ class ProductNameFactoryTest {
     }
 
     @Test
-    void 비속어가_포함되면_미인증_상태로_생성된다() {
-        ProductName name = factory.create("badword");
+    void 비속어가_포함되면_예외가_발생한다() {
+        IllegalArgumentException exception =
+                assertThrows(IllegalArgumentException.class, () -> factory.create("badword"));
 
-        assertEquals("badword", name.getValue());
-        assertFalse(name.isVerified());
+        assertEquals("상품 이름에 비속어가 포함되어 있습니다.", exception.getMessage());
     }
 
     @Test
-    void 외부_API_실패시_미인증_상태로_생성된다() {
-        ProductNameFactory failingFactory = new ProductNameFactory(text -> {
-            throw new RuntimeException("API failure");
-        });
-
-        ProductName name = failingFactory.create("상품");
+    void 미인증_이름을_생성한다() {
+        ProductName name = factory.createUnverified("상품");
 
         assertEquals("상품", name.getValue());
         assertFalse(name.isVerified());

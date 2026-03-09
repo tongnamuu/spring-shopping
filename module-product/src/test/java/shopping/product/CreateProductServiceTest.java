@@ -46,16 +46,15 @@ class CreateProductServiceTest {
     }
 
     @Test
-    void 비속어가_포함되면_PENDING_상태로_저장된다() {
+    void 비속어가_포함되면_예외가_발생한다() {
         ProductNameFactory nameFactory =
                 new ProductNameFactory(new FakeProfanityChecker("badword"));
         SaveProductService saveProductService = new SaveProductService(productRepository);
         CreateProductService serviceWithProfanity =
                 new CreateProductService(nameFactory, saveProductService);
 
-        Product product = serviceWithProfanity.execute("badword", 1000, "http://image.png");
-
-        assertEquals(ProductStatus.PENDING, product.getStatus());
+        assertThrows(IllegalArgumentException.class,
+                () -> serviceWithProfanity.execute("badword", 1000, "http://image.png"));
     }
 
     @Test

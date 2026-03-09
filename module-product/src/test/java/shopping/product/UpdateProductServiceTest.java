@@ -65,7 +65,7 @@ class UpdateProductServiceTest {
     }
 
     @Test
-    void 비속어가_포함되면_PENDING_상태로_수정된다() {
+    void 비속어가_포함되면_예외가_발생한다() {
         Product saved = productRepository
                 .save(new Product(new ProductName("상품", true), 1000, "http://img.png"));
         ProductNameFactory nameFactory =
@@ -74,9 +74,22 @@ class UpdateProductServiceTest {
         UpdateProductService serviceWithProfanity =
                 new UpdateProductService(nameFactory, modifyProductService);
 
-        Product updated =
-                serviceWithProfanity.execute(saved.getId(), "badword", 2000, "http://new.png");
+        assertThrows(IllegalArgumentException.class, () -> serviceWithProfanity
+                .execute(saved.getId(), "badword", 2000, "http://new.png"));
+    }
 
-        assertEquals(ProductStatus.PENDING, updated.getStatus());
+    @Test
+    void 외부_API_실패시_예외가_발생한다() {
+        Product saved = productRepository
+                .save(new Product(new ProductName("상품", true), 1000, "http://img.png"));
+        ProductNameFactory nameFactory = new ProductNameFactory(text -> {
+            throw new RuntimeException("API failure");
+        });
+        ModifyProductService modifyProductService = new ModifyProductService(productRepository);
+        UpdateProductService serviceWithFailure =
+                new UpdateProductService(nameFactory, modifyProductService);
+
+        assertThrows(RuntimeException.class,
+                () -> serviceWithFailure.execute(saved.getId(), "상품", 2000, "http://new.png"));
     }
 }

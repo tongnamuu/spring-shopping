@@ -16,12 +16,15 @@ public class ProductNameFactory {
 
     public ProductName create(String name) {
         validate(name);
-        try {
-            boolean containsProfanity = profanityChecker.containsProfanity(name);
-            return new ProductName(name, !containsProfanity);
-        } catch (Exception e) {
-            return new ProductName(name, false);
+        if (profanityChecker.containsProfanity(name)) {
+            throw new IllegalArgumentException("상품 이름에 비속어가 포함되어 있습니다.");
         }
+        return new ProductName(name, true);
+    }
+
+    public ProductName createUnverified(String name) {
+        validate(name);
+        return new ProductName(name, false);
     }
 
     private void validate(String name) {
