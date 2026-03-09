@@ -12,7 +12,7 @@ import com.tngtech.archunit.lang.ConditionEvents;
 import com.tngtech.archunit.lang.SimpleConditionEvent;
 import shopping.product.CreateProductService;
 import shopping.product.Product;
-import shopping.product.ProductEntity;
+import shopping.product.ProductDocument;
 
 @AnalyzeClasses(packages = "shopping", importOptions = ImportOption.DoNotIncludeTests.class)
 class ProductArchTest {
@@ -20,7 +20,7 @@ class ProductArchTest {
     @ArchTest
     static final ArchRule product_should_only_be_created_through_CreateProductService =
             classes().that().doNotHaveFullyQualifiedName(CreateProductService.class.getName()).and()
-                    .doNotHaveFullyQualifiedName(ProductEntity.class.getName())
+                    .doNotHaveFullyQualifiedName(ProductDocument.class.getName())
                     .should(new ArchCondition<JavaClass>("not call Product constructor directly") {
                         @Override
                         public void check(JavaClass javaClass, ConditionEvents events) {

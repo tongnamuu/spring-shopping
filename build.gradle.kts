@@ -19,6 +19,7 @@ dependencies {
     implementation(project(":module-product"))
     implementation(project(":module-member"))
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -40,6 +41,7 @@ dependencies {
     testImplementation("org.junit.platform:junit-platform-suite-api")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testRuntimeOnly("org.junit.platform:junit-platform-suite-engine")
+    testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo.spring3x:4.24.0")
 }
 
 allprojects {

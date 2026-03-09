@@ -7,29 +7,29 @@ import java.util.UUID;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class JpaProductRepository implements ProductRepository {
+public class MongoProductRepository implements ProductRepository {
 
     private final SpringDataProductRepository repository;
 
-    public JpaProductRepository(SpringDataProductRepository repository) {
+    public MongoProductRepository(SpringDataProductRepository repository) {
         this.repository = repository;
     }
 
     @Override
     public Product save(Product product) {
-        ProductEntity entity = ProductEntity.fromDomain(product);
-        ProductEntity saved = repository.save(entity);
+        ProductDocument doc = ProductDocument.fromDomain(product);
+        ProductDocument saved = repository.save(doc);
         return saved.toDomain();
     }
 
     @Override
     public Optional<Product> findById(UUID id) {
-        return repository.findById(id).map(ProductEntity::toDomain);
+        return repository.findById(id).map(ProductDocument::toDomain);
     }
 
     @Override
     public List<Product> findAll() {
-        return repository.findAll().stream().map(ProductEntity::toDomain).toList();
+        return repository.findAll().stream().map(ProductDocument::toDomain).toList();
     }
 
     @Override
