@@ -14,11 +14,17 @@ public class ModifyProductService {
         this.productRepository = productRepository;
     }
 
-    public Product execute(UUID id, ProductName productName, long price, String imageUrl,
-            ProductStatus status) {
+    public Product execute(UUID id, ProductName productName, long price, String imageUrl) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("상품이 존재하지 않습니다."));
-        product.update(productName, price, imageUrl, status);
+        product.update(productName, price, imageUrl);
+        return productRepository.save(product);
+    }
+
+    public Product execute(UUID id, String name, long price, String imageUrl) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("상품이 존재하지 않습니다."));
+        product.update(name, price, imageUrl);
         return productRepository.save(product);
     }
 }

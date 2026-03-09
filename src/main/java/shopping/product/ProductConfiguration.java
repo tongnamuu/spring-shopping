@@ -7,8 +7,8 @@ import org.springframework.context.annotation.Configuration;
 public class ProductConfiguration {
 
     @Bean
-    public ProductNameFactory productNameFactory() {
-        return new ProductNameFactory();
+    public ProductNameFactory productNameFactory(ProfanityChecker profanityChecker) {
+        return new ProductNameFactory(profanityChecker);
     }
 
     @Bean
@@ -23,8 +23,8 @@ public class ProductConfiguration {
 
     @Bean
     public CreateProduct createProduct(ProductNameFactory productNameFactory,
-            SaveProductService saveProductService, ProfanityChecker profanityChecker) {
-        return new CreateProductService(productNameFactory, saveProductService, profanityChecker);
+            SaveProductService saveProductService) {
+        return new CreateProductService(productNameFactory, saveProductService);
     }
 
     @Bean
@@ -34,8 +34,8 @@ public class ProductConfiguration {
 
     @Bean
     public UpdateProduct updateProduct(ProductNameFactory productNameFactory,
-            ModifyProductService modifyProductService, ProfanityChecker profanityChecker) {
-        return new UpdateProductService(productNameFactory, modifyProductService, profanityChecker);
+            ModifyProductService modifyProductService) {
+        return new UpdateProductService(productNameFactory, modifyProductService);
     }
 
     @Bean

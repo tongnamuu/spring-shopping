@@ -35,19 +35,34 @@ public class Product {
 
     protected Product() {}
 
-    public Product(ProductName name, long price, String imageUrl, ProductStatus status) {
+    public Product(ProductName name, long price, String imageUrl) {
         this.id = UUID.randomUUID();
         this.name = name;
         this.price = price;
         this.imageUrl = imageUrl;
-        this.status = status;
+        this.status = ProductStatus.CREATED;
     }
 
-    public void update(ProductName name, long price, String imageUrl, ProductStatus status) {
+    public Product(String name, long price, String imageUrl) {
+        this.id = UUID.randomUUID();
+        this.name = new ProductName(name);
+        this.price = price;
+        this.imageUrl = imageUrl;
+        this.status = ProductStatus.PENDING;
+    }
+
+    public void update(ProductName name, long price, String imageUrl) {
         this.name = name;
         this.price = price;
         this.imageUrl = imageUrl;
-        this.status = status;
+        this.status = ProductStatus.CREATED;
+    }
+
+    public void update(String name, long price, String imageUrl) {
+        this.name = new ProductName(name);
+        this.price = price;
+        this.imageUrl = imageUrl;
+        this.status = ProductStatus.PENDING;
     }
 
     public UUID getId() {

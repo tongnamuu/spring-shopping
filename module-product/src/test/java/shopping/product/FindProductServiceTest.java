@@ -24,8 +24,8 @@ class FindProductServiceTest {
 
     @Test
     void ID로_상품을_조회한다() {
-        Product saved = productRepository.save(
-                new Product(new ProductName("상품"), 1000, "http://img.png", ProductStatus.CREATED));
+        Product saved =
+                productRepository.save(new Product(new ProductName("상품"), 1000, "http://img.png"));
 
         Product found = service.execute(saved.getId());
 
@@ -43,10 +43,8 @@ class FindProductServiceTest {
 
     @Test
     void 전체_상품을_조회한다() {
-        productRepository.save(new Product(new ProductName("상품1"), 1000, "http://img1.png",
-                ProductStatus.CREATED));
-        productRepository.save(new Product(new ProductName("상품2"), 2000, "http://img2.png",
-                ProductStatus.CREATED));
+        productRepository.save(new Product(new ProductName("상품1"), 1000, "http://img1.png"));
+        productRepository.save(new Product(new ProductName("상품2"), 2000, "http://img2.png"));
 
         List<Product> products = service.execute();
 
@@ -62,10 +60,8 @@ class FindProductServiceTest {
 
     @Test
     void PENDING_상품은_조회되지_않는다() {
-        productRepository.save(new Product(new ProductName("상품1"), 1000, "http://img1.png",
-                ProductStatus.CREATED));
-        productRepository.save(new Product(new ProductName("상품2"), 2000, "http://img2.png",
-                ProductStatus.PENDING));
+        productRepository.save(new Product(new ProductName("상품1"), 1000, "http://img1.png"));
+        productRepository.save(new Product("상품2", 2000, "http://img2.png"));
 
         List<Product> products = service.execute();
 
@@ -75,8 +71,7 @@ class FindProductServiceTest {
 
     @Test
     void PENDING_상품은_ID로_조회되지_않는다() {
-        Product saved = productRepository.save(
-                new Product(new ProductName("상품"), 1000, "http://img.png", ProductStatus.PENDING));
+        Product saved = productRepository.save(new Product("상품", 1000, "http://img.png"));
 
         assertThrows(NoSuchElementException.class, () -> service.execute(saved.getId()));
     }

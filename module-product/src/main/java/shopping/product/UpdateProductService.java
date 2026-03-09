@@ -6,28 +6,21 @@ public class UpdateProductService implements UpdateProduct {
 
     private final ProductNameFactory productNameFactory;
     private final ModifyProductService modifyProductService;
-    private final ProfanityChecker profanityChecker;
 
     public UpdateProductService(ProductNameFactory productNameFactory,
-            ModifyProductService modifyProductService, ProfanityChecker profanityChecker) {
+            ModifyProductService modifyProductService) {
         this.productNameFactory = productNameFactory;
         this.modifyProductService = modifyProductService;
-        this.profanityChecker = profanityChecker;
     }
 
     @Override
     public Product execute(UUID id, String name, long price, String imageUrl) {
-        ProductName productName = productNameFactory.create(name);
-        ProductStatus status = checkProfanity(name);
-        return modifyProductService.execute(id, productName, price, imageUrl, status);
-    }
-
-    private ProductStatus checkProfanity(String name) {
+        productNameFactory.validate(name);
         try {
-            return profanityChecker.containsProfanity(name) ? ProductStatus.PENDING
-                    : ProductStatus.CREATED;
+            ProductName productName = productNameFactory.create(name);
+            return modifyProductService.execute(id, productName, price, imageUrl);
         } catch (Exception e) {
-            return ProductStatus.PENDING;
+            return modifyProductService.execute(id, name, price, imageUrl);
         }
     }
 }

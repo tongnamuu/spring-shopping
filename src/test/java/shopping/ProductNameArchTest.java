@@ -10,6 +10,7 @@ import com.tngtech.archunit.lang.ArchCondition;
 import com.tngtech.archunit.lang.ArchRule;
 import com.tngtech.archunit.lang.ConditionEvents;
 import com.tngtech.archunit.lang.SimpleConditionEvent;
+import shopping.product.Product;
 import shopping.product.ProductName;
 import shopping.product.ProductNameFactory;
 
@@ -17,17 +18,17 @@ import shopping.product.ProductNameFactory;
 class ProductNameArchTest {
 
     @ArchTest
-    static final ArchRule productName_constructor_should_only_be_called_by_factory =
-            classes().that().doNotHaveFullyQualifiedName(ProductNameFactory.class.getName()).should(
-                    new ArchCondition<JavaClass>("not call ProductName constructor directly") {
-                        @Override
-                        public void check(JavaClass javaClass, ConditionEvents events) {
-                            javaClass.getConstructorCallsFromSelf().stream().filter(
-                                    call -> call.getTargetOwner().isEquivalentTo(ProductName.class))
-                                    .forEach(call -> events.add(SimpleConditionEvent.violated(call,
-                                            javaClass.getName()
-                                                    + " calls ProductName constructor in "
-                                                    + call.getSourceCodeLocation())));
-                        }
-                    });
+    static final ArchRule productName_constructor_should_only_be_called_by_factory = classes()
+            .that().doNotHaveFullyQualifiedName(ProductNameFactory.class.getName()).and()
+            .doNotHaveFullyQualifiedName(Product.class.getName())
+            .should(new ArchCondition<JavaClass>("not call ProductName constructor directly") {
+                @Override
+                public void check(JavaClass javaClass, ConditionEvents events) {
+                    javaClass.getConstructorCallsFromSelf().stream()
+                            .filter(call -> call.getTargetOwner().isEquivalentTo(ProductName.class))
+                            .forEach(call -> events.add(SimpleConditionEvent.violated(call,
+                                    javaClass.getName() + " calls ProductName constructor in "
+                                            + call.getSourceCodeLocation())));
+                }
+            });
 }

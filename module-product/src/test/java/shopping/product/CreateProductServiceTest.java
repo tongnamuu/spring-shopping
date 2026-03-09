@@ -15,10 +15,9 @@ class CreateProductServiceTest {
     @BeforeEach
     void setUp() {
         productRepository = new InMemoryProductRepository();
-        ProductNameFactory nameFactory = new ProductNameFactory();
+        ProductNameFactory nameFactory = new ProductNameFactory(new FakeProfanityChecker());
         SaveProductService saveProductService = new SaveProductService(productRepository);
-        service = new CreateProductService(nameFactory, saveProductService,
-                new FakeProfanityChecker());
+        service = new CreateProductService(nameFactory, saveProductService);
     }
 
     @Test
@@ -48,9 +47,11 @@ class CreateProductServiceTest {
 
     @Test
     void 비속어가_포함되면_PENDING_상태로_저장된다() {
-        CreateProductService serviceWithProfanity = new CreateProductService(
-                new ProductNameFactory(), new SaveProductService(productRepository),
-                new FakeProfanityChecker("badword"));
+        ProductNameFactory nameFactory =
+                new ProductNameFactory(new FakeProfanityChecker("badword"));
+        SaveProductService saveProductService = new SaveProductService(productRepository);
+        CreateProductService serviceWithProfanity =
+                new CreateProductService(nameFactory, saveProductService);
 
         Product product = serviceWithProfanity.execute("badword", 1000, "http://image.png");
 
@@ -59,10 +60,12 @@ class CreateProductServiceTest {
 
     @Test
     void 외부_API_실패시_PENDING_상태로_저장된다() {
-        CreateProductService serviceWithFailure = new CreateProductService(new ProductNameFactory(),
-                new SaveProductService(productRepository), text -> {
-                    throw new RuntimeException("API failure");
-                });
+        ProductNameFactory nameFactory = new ProductNameFactory(text -> {
+            throw new RuntimeException("API failure");
+        });
+        SaveProductService saveProductService = new SaveProductService(productRepository);
+        CreateProductService serviceWithFailure =
+                new CreateProductService(nameFactory, saveProductService);
 
         Product product = serviceWithFailure.execute("상품", 1000, "http://image.png");
 
