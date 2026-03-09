@@ -16,8 +16,14 @@ public class ProductNameFactory {
 
     public ProductName create(String name) {
         validate(name);
-        if (profanityChecker.containsProfanity(name)) {
-            throw new IllegalArgumentException("상품 이름에 비속어가 포함되어 있습니다.");
+        try {
+            if (profanityChecker.containsProfanity(name)) {
+                throw new IllegalArgumentException("상품 이름에 비속어가 포함되어 있습니다.");
+            }
+        } catch (IllegalArgumentException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ProfanityCheckException(e);
         }
         return new ProductName(name, true);
     }

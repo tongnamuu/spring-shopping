@@ -16,9 +16,7 @@ public class CreateProductService implements CreateProduct {
         try {
             ProductName productName = productNameFactory.create(name);
             return saveProductService.execute(productName, price, imageUrl);
-        } catch (IllegalArgumentException e) {
-            throw e;
-        } catch (Exception e) {
+        } catch (ProfanityCheckException e) {
             ProductName productName = productNameFactory.createUnverified(name);
             return saveProductService.execute(productName, price, imageUrl);
         }

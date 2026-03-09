@@ -89,7 +89,7 @@ class UpdateProductServiceTest {
         UpdateProductService serviceWithFailure =
                 new UpdateProductService(nameFactory, modifyProductService);
 
-        assertThrows(RuntimeException.class,
+        assertThrows(ProfanityCheckException.class,
                 () -> serviceWithFailure.execute(saved.getId(), "상품", 2000, "http://new.png"));
     }
 }
