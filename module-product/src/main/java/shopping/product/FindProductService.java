@@ -17,12 +17,12 @@ public class FindProductService implements FindProduct {
 
     @Override
     public Product execute(UUID id) {
-        return productRepository.findById(id)
+        return productRepository.findByIdAndStatus(id, ProductStatus.CREATED)
                 .orElseThrow(() -> new NoSuchElementException("상품이 존재하지 않습니다."));
     }
 
     @Override
     public List<Product> execute() {
-        return productRepository.findAll();
+        return productRepository.findAllByStatus(ProductStatus.CREATED);
     }
 }

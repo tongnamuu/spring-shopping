@@ -11,8 +11,9 @@ public class SaveProductService {
         this.productRepository = productRepository;
     }
 
-    public Product execute(ProductName productName, long price, String imageUrl) {
-        Product product = new Product(productName, price, imageUrl);
+    public Product execute(ProductName productName, long price, String imageUrl,
+            ProductStatus status) {
+        Product product = new Product(productName, price, imageUrl, status);
         return productRepository.save(product);
     }
 }
