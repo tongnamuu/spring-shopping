@@ -6,6 +6,8 @@ public class Wish {
 
     private UUID productId;
 
+    protected Wish() {}
+
     public Wish(UUID productId) {
         this.productId = productId;
     }

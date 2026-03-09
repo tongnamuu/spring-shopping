@@ -5,14 +5,22 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import shopping.wish.Wish;
 
+@Document(collection = "members")
 public class Member {
 
+    @Id
     private UUID id;
+
     private String email;
     private String password;
     private List<Wish> wishes = new ArrayList<>();
+
+    protected Member() {}
 
     public Member(UUID id, String email, String password) {
         this.id = id;
