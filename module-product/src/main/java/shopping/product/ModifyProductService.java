@@ -1,28 +1,23 @@
 package shopping.product;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
-public class FindProductService implements FindProduct {
+public class ModifyProductService {
 
     private final ProductRepository productRepository;
 
-    public FindProductService(ProductRepository productRepository) {
+    public ModifyProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
 
-    @Override
-    public Product execute(UUID id) {
-        return productRepository.findById(id)
+    public Product execute(UUID id, ProductName productName, long price, String imageUrl) {
+        Product product = productRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("상품이 존재하지 않습니다."));
-    }
-
-    @Override
-    public List<Product> execute() {
-        return productRepository.findAll();
+        product.update(productName, price, imageUrl);
+        return productRepository.save(product);
     }
 }

@@ -16,7 +16,8 @@ class CreateProductServiceTest {
     void setUp() {
         productRepository = new InMemoryProductRepository();
         ProductNameFactory nameFactory = new ProductNameFactory(new FakeProfanityChecker());
-        service = new CreateProductService(productRepository, nameFactory);
+        SaveProductService saveProductService = new SaveProductService(productRepository);
+        service = new CreateProductService(nameFactory, saveProductService);
     }
 
     @Test

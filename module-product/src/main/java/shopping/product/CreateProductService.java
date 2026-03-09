@@ -2,19 +2,18 @@ package shopping.product;
 
 public class CreateProductService implements CreateProduct {
 
-    private final ProductRepository productRepository;
     private final ProductNameFactory productNameFactory;
+    private final SaveProductService saveProductService;
 
-    public CreateProductService(ProductRepository productRepository,
-            ProductNameFactory productNameFactory) {
-        this.productRepository = productRepository;
+    public CreateProductService(ProductNameFactory productNameFactory,
+            SaveProductService saveProductService) {
         this.productNameFactory = productNameFactory;
+        this.saveProductService = saveProductService;
     }
 
     @Override
     public Product execute(String name, long price, String imageUrl) {
         ProductName productName = productNameFactory.create(name);
-        Product product = new Product(productName, price, imageUrl);
-        return productRepository.save(product);
+        return saveProductService.execute(productName, price, imageUrl);
     }
 }

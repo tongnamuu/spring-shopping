@@ -18,7 +18,8 @@ class UpdateProductServiceTest {
     void setUp() {
         productRepository = new InMemoryProductRepository();
         ProductNameFactory nameFactory = new ProductNameFactory(new FakeProfanityChecker());
-        service = new UpdateProductService(productRepository, nameFactory);
+        ModifyProductService modifyProductService = new ModifyProductService(productRepository);
+        service = new UpdateProductService(nameFactory, modifyProductService);
     }
 
     @Test
