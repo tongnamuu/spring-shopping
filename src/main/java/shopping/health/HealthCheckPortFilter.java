@@ -27,7 +27,7 @@ public class HealthCheckPortFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
         boolean isHealthPort = request.getLocalPort() == healthPort;
-        boolean isHealthPath = request.getRequestURI().startsWith("/health");
+        boolean isHealthPath = request.getServletPath().startsWith("/health");
 
         if (isHealthPort && !isHealthPath) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
