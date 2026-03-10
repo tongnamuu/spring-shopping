@@ -1,9 +1,11 @@
 plugins {
     java
+    jacoco
     id("org.springframework.boot") version "3.5.9"
     id("io.spring.dependency-management") version "1.1.7"
     id("com.diffplug.spotless") version "6.25.0"
     id("org.asciidoctor.jvm.convert") version "3.3.2"
+    id("info.solidsoft.pitest") version "1.15.0"
 }
 
 group = "camp.nextstep.edu"
@@ -40,6 +42,7 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testRuntimeOnly("org.junit.platform:junit-platform-suite-engine")
     testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo.spring3x:4.24.0")
+    pitest("it.mulders.stryker:pit-dashboard-reporter:0.2.1")
 }
 
 repositories {
@@ -58,6 +61,34 @@ spotless {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        html.required = true
+        csv.required = false
+    }
+}
+
+pitest {
+    junit5PluginVersion = "1.2.1"
+    targetClasses = setOf("shopping.*")
+    targetTests = setOf("shopping.*")
+    excludedClasses = setOf(
+        "shopping.Application",
+        "shopping.*.dto.*",
+        "shopping.*.*Configuration",
+        "shopping.*.*Controller",
+        "shopping.*.*Request",
+        "shopping.*.*Response",
+        "shopping.health.*"
+    )
+    mutators = setOf("DEFAULTS")
+    outputFormats = setOf("HTML")
+    threads = Runtime.getRuntime().availableProcessors()
+    timestampedReports = false
 }
 
 tasks.named("asciidoctor", org.asciidoctor.gradle.jvm.AsciidoctorTask::class) {
