@@ -16,8 +16,6 @@ java {
 }
 
 dependencies {
-    implementation(project(":module-product"))
-    implementation(project(":module-member"))
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
@@ -44,19 +42,17 @@ dependencies {
     testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo.spring3x:4.24.0")
 }
 
-allprojects {
-    repositories {
-        mavenCentral()
-    }
-    apply(plugin = "com.diffplug.spotless")
-    configure<com.diffplug.gradle.spotless.SpotlessExtension> {
-        java {
-            target("src/**/*.java")
-            eclipse("4.26").configFile(rootProject.file("google-style.xml"))
-            removeUnusedImports()
-            trimTrailingWhitespace()
-            endWithNewline()
-        }
+repositories {
+    mavenCentral()
+}
+
+spotless {
+    java {
+        target("src/**/*.java")
+        eclipse("4.26").configFile(rootProject.file("google-style.xml"))
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
     }
 }
 
