@@ -79,10 +79,9 @@ pitest {
     excludedClasses = setOf(
         "shopping.Application",
         "shopping.*.dto.*",
+        "shopping.*.controller.*",
         "shopping.*.*Configuration",
-        "shopping.*.*Controller",
-        "shopping.*.*Request",
-        "shopping.*.*Response",
+        "shopping.*.*Repository",
         "shopping.health.*"
     )
     mutators = setOf("DEFAULTS")
