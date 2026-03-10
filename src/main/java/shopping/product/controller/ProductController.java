@@ -2,6 +2,7 @@ package shopping.product.controller;
 
 import shopping.product.domain.*;
 import shopping.product.dto.*;
+import shopping.wish.domain.RemoveWishByProduct;
 
 import java.net.URI;
 import java.util.List;
@@ -28,13 +29,16 @@ public class ProductController {
     private final FindProduct findProduct;
     private final UpdateProduct updateProduct;
     private final DeleteProduct deleteProduct;
+    private final RemoveWishByProduct removeWishByProduct;
 
     public ProductController(CreateProduct createProduct, FindProduct findProduct,
-            UpdateProduct updateProduct, DeleteProduct deleteProduct) {
+            UpdateProduct updateProduct, DeleteProduct deleteProduct,
+            RemoveWishByProduct removeWishByProduct) {
         this.createProduct = createProduct;
         this.findProduct = findProduct;
         this.updateProduct = updateProduct;
         this.deleteProduct = deleteProduct;
+        this.removeWishByProduct = removeWishByProduct;
     }
 
     @PostMapping
@@ -62,6 +66,7 @@ public class ProductController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         deleteProduct.execute(id);
+        removeWishByProduct.execute(id);
         return ResponseEntity.noContent().build();
     }
 
