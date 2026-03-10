@@ -3,6 +3,7 @@ package shopping;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.restassured.RestAssuredRestDocumentation.document;
 
+import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -16,6 +17,18 @@ public class ProductStepDefinitions {
 
     @Autowired
     private AcceptanceTestContext context;
+
+    @Autowired
+    private FakeProfanityChecker profanityChecker;
+
+    @Autowired
+    private shopping.product.SpringDataProductRepository productRepository;
+
+    @Before
+    public void resetProfanityChecker() {
+        productRepository.deleteAll();
+        profanityChecker.reset();
+    }
 
     @Given("a product exists with name {string} price {long} and imageUrl {string}")
     public void aProductExistsWithNamePriceAndImageUrl(String name, long price, String imageUrl) {
@@ -69,6 +82,31 @@ public class ProductStepDefinitions {
                 .filter(document("product-find-all")).when().get("/api/products").then().extract());
     }
 
+    @When("I find all products with pendingStatus {string}")
+    public void iFindAllProductsWithPendingStatus(String pendingStatus) {
+        context.setResponse(RestAssured.given().spec(context.documentSpec("product-find-all"))
+                .filter(document("product-find-all")).queryParam("pendingStatus", pendingStatus)
+                .when().get("/api/products").then().extract());
+    }
+
+    @When("I recheck pending products")
+    public void iRecheckPendingProducts() {
+        context.setResponse(
+                RestAssured.given().spec(context.documentSpec("product-pending-review-recheck"))
+                        .filter(document("product-pending-review-recheck")).when()
+                        .post("/api/products/pending-review/recheck").then().extract());
+    }
+
+    @Given("the profanity checker resolves pending products as clean")
+    public void theProfanityCheckerResolvesPendingProductsAsClean() {
+        profanityChecker.resolvePendingReviewAsClean();
+    }
+
+    @Given("the profanity checker resolves pending products as profanity")
+    public void theProfanityCheckerResolvesPendingProductsAsProfanity() {
+        profanityChecker.resolvePendingReviewAsProfane();
+    }
+
     @Then("the product should be created")
     public void theProductShouldBeCreated() {
         assertThat(context.getResponse().statusCode()).isEqualTo(201);
@@ -94,8 +132,32 @@ public class ProductStepDefinitions {
         assertThat(context.getResponse().statusCode()).isEqualTo(200);
     }
 
+    @Then("the product list should contain {int} product")
+    public void theProductListShouldContainProduct(int count) {
+        assertThat(context.getResponse().statusCode()).isEqualTo(200);
+        assertThat(context.getResponse().jsonPath().getList("$")).hasSize(count);
+    }
+
     @And("the product response should have name {string}")
     public void theProductResponseShouldHaveName(String name) {
         assertThat(context.getResponse().jsonPath().getString("name")).isEqualTo(name);
+    }
+
+    @And("the product response should have moderation status {string}")
+    public void theProductResponseShouldHaveModerationStatus(String moderationStatus) {
+        assertThat(context.getResponse().jsonPath().getString("moderationStatus"))
+                .isEqualTo(moderationStatus);
+    }
+
+    @And("the recheck response should have approved count {int}")
+    public void theRecheckResponseShouldHaveApprovedCount(int approvedCount) {
+        assertThat(context.getResponse().jsonPath().getInt("approvedCount"))
+                .isEqualTo(approvedCount);
+    }
+
+    @And("the recheck response should have rejected count {int}")
+    public void theRecheckResponseShouldHaveRejectedCount(int rejectedCount) {
+        assertThat(context.getResponse().jsonPath().getInt("rejectedCount"))
+                .isEqualTo(rejectedCount);
     }
 }

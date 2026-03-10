@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -25,13 +26,16 @@ public class ProductController {
     private final FindProduct findProduct;
     private final UpdateProduct updateProduct;
     private final DeleteProduct deleteProduct;
+    private final ReviewPendingProducts reviewPendingProducts;
 
     public ProductController(CreateProduct createProduct, FindProduct findProduct,
-            UpdateProduct updateProduct, DeleteProduct deleteProduct) {
+            UpdateProduct updateProduct, DeleteProduct deleteProduct,
+            ReviewPendingProducts reviewPendingProducts) {
         this.createProduct = createProduct;
         this.findProduct = findProduct;
         this.updateProduct = updateProduct;
         this.deleteProduct = deleteProduct;
+        this.reviewPendingProducts = reviewPendingProducts;
     }
 
     @PostMapping
@@ -63,10 +67,16 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductResponse>> findAll() {
+    public ResponseEntity<List<ProductResponse>> findAll(
+            @RequestParam(name = "pendingStatus", defaultValue = "false") boolean pendingStatus) {
         List<ProductResponse> products =
-                findProduct.execute().stream().map(ProductResponse::from).toList();
+                findProduct.execute(pendingStatus).stream().map(ProductResponse::from).toList();
         return ResponseEntity.ok(products);
+    }
+
+    @PostMapping("/pending-review/recheck")
+    public ResponseEntity<PendingProductReviewResult> recheckPendingProducts() {
+        return ResponseEntity.ok(reviewPendingProducts.execute());
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

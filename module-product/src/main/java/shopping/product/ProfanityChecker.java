@@ -2,5 +2,5 @@ package shopping.product;
 
 public interface ProfanityChecker {
 
-    boolean containsProfanity(String text);
+    ProfanityCheckResult check(String text);
 }

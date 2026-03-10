@@ -17,8 +17,9 @@ class UpdateProductServiceTest {
     @BeforeEach
     void setUp() {
         productRepository = new InMemoryProductRepository();
-        ProductNameFactory nameFactory = new ProductNameFactory(new FakeProfanityChecker());
-        service = new UpdateProductService(productRepository, nameFactory);
+        ProductNameFactory nameFactory = new ProductNameFactory();
+        service = new UpdateProductService(productRepository, nameFactory,
+                new FakeProfanityChecker());
     }
 
     @Test
@@ -32,6 +33,7 @@ class UpdateProductServiceTest {
         assertEquals("수정상품", updated.getName().getValue());
         assertEquals(2000, updated.getPrice());
         assertEquals("http://new.png", updated.getImageUrl());
+        assertEquals(ProductModerationStatus.APPROVED, updated.getModerationStatus());
     }
 
     @Test
@@ -60,5 +62,33 @@ class UpdateProductServiceTest {
 
         assertThrows(IllegalArgumentException.class,
                 () -> service.execute(saved.getId(), "", 2000, "http://new.png"));
+    }
+
+    @Test
+    void 비속어가_포함되면_수정에_실패한다() {
+        Product saved =
+                productRepository.save(new Product(new ProductName("상품"), 1000, "http://img.png"));
+        ProductNameFactory nameFactory = new ProductNameFactory();
+        UpdateProductService profanityService = new UpdateProductService(productRepository,
+                nameFactory, new FakeProfanityChecker("badword"));
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> profanityService.execute(saved.getId(), "badword", 2000, "http://new.png"));
+
+        assertEquals("상품 이름에 비속어가 포함되어 있습니다.", exception.getMessage());
+    }
+
+    @Test
+    void 비속어_검사가_불가능하면_검토_대기_상태로_수정한다() {
+        Product saved =
+                productRepository.save(new Product(new ProductName("상품"), 1000, "http://img.png"));
+        ProductNameFactory nameFactory = new ProductNameFactory();
+        UpdateProductService pendingReviewService = new UpdateProductService(productRepository,
+                nameFactory, FakeProfanityChecker.unknownFor("검토대기"));
+
+        Product updated =
+                pendingReviewService.execute(saved.getId(), "검토대기", 2000, "http://new.png");
+
+        assertEquals(ProductModerationStatus.PENDING_REVIEW, updated.getModerationStatus());
     }
 }

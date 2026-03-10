@@ -20,6 +20,13 @@ public class FindProductService implements FindProduct {
 
     @Override
     public List<Product> execute() {
-        return productRepository.findAll();
+        return execute(false);
+    }
+
+    @Override
+    public List<Product> execute(boolean pendingStatus) {
+        return productRepository.findAll().stream().filter(
+                product -> product.isApproved() || pendingStatus && product.isPendingReview())
+                .toList();
     }
 }

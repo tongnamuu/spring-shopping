@@ -2,6 +2,7 @@ package shopping.product;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientException;
 
 @Component
 public class PurgoMalumProfanityChecker implements ProfanityChecker {
@@ -13,9 +14,19 @@ public class PurgoMalumProfanityChecker implements ProfanityChecker {
     }
 
     @Override
-    public boolean containsProfanity(String text) {
-        String result = restClient.get().uri("/service/containsprofanity?text={text}", text)
-                .retrieve().body(String.class);
-        return "true".equals(result);
+    public ProfanityCheckResult check(String text) {
+        try {
+            String result = restClient.get().uri("/service/containsprofanity?text={text}", text)
+                    .retrieve().body(String.class);
+            if ("true".equalsIgnoreCase(result)) {
+                return ProfanityCheckResult.PROFANE;
+            }
+            if ("false".equalsIgnoreCase(result)) {
+                return ProfanityCheckResult.CLEAN;
+            }
+            return ProfanityCheckResult.UNKNOWN;
+        } catch (RestClientException e) {
+            return ProfanityCheckResult.UNKNOWN;
+        }
     }
 }

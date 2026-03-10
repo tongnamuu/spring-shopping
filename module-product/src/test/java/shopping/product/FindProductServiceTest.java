@@ -57,4 +57,29 @@ class FindProductServiceTest {
 
         assertTrue(products.isEmpty());
     }
+
+    @Test
+    void 기본_조회에서는_검토_대기_상품을_제외한다() {
+        productRepository.save(new Product(new ProductName("승인상품"), 1000, "http://img1.png"));
+        productRepository.save(new Product(new ProductName("검토대기"), 2000, "http://img2.png",
+                ProductModerationStatus.PENDING_REVIEW));
+
+        List<Product> products = service.execute();
+
+        assertEquals(1, products.size());
+        assertEquals("승인상품", products.getFirst().getName().getValue());
+    }
+
+    @Test
+    void pendingStatus가_true면_검토_대기_상품도_포함한다() {
+        productRepository.save(new Product(new ProductName("승인상품"), 1000, "http://img1.png"));
+        productRepository.save(new Product(new ProductName("검토대기"), 2000, "http://img2.png",
+                ProductModerationStatus.PENDING_REVIEW));
+        productRepository.save(new Product(new ProductName("거절상품"), 3000, "http://img3.png",
+                ProductModerationStatus.REJECTED));
+
+        List<Product> products = service.execute(true);
+
+        assertEquals(2, products.size());
+    }
 }

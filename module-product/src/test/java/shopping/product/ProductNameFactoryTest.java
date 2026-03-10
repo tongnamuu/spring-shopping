@@ -12,7 +12,7 @@ class ProductNameFactoryTest {
 
     @BeforeEach
     void setUp() {
-        factory = new ProductNameFactory(new FakeProfanityChecker("badword"));
+        factory = new ProductNameFactory();
     }
 
     @Test
@@ -77,11 +77,4 @@ class ProductNameFactoryTest {
         assertEquals("상품 이름에 허용되지 않는 특수문자가 포함되어 있습니다.", exception.getMessage());
     }
 
-    @Test
-    void 비속어가_포함되면_예외가_발생한다() {
-        IllegalArgumentException exception =
-                assertThrows(IllegalArgumentException.class, () -> factory.create("badword"));
-
-        assertEquals("상품 이름에 비속어가 포함되어 있습니다.", exception.getMessage());
-    }
 }

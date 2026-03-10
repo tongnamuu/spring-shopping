@@ -1,0 +1,69 @@
+# Plain HTTP file.
+# No parameters. No JavaScript.
+# Manual flow:
+# 1. Run register or login.
+# 2. Copy the token from login response into Authorization headers below.
+# 3. Create a product.
+# 4. Copy the product id from the create response into PRODUCT_ID in the URLs below.
+
+### Register member
+POST http://localhost:8080/api/members/register
+Content-Type: application/json
+
+{
+  "email": "api-test@example.com",
+  "password": "password1234"
+}
+
+### Login member
+POST http://localhost:8080/api/members/login
+Content-Type: application/json
+
+{
+  "email": "api-test@example.com",
+  "password": "password1234"
+}
+
+### Create product
+POST http://localhost:8080/api/products
+Content-Type: application/json
+
+{
+  "name": "fuck",
+  "price": 50000,
+  "imageUrl": "https://example.com/kb.png"
+}
+
+### Find all products
+GET http://localhost:8080/api/products
+
+### Find product by id
+GET http://localhost:8080/api/products/PRODUCT_ID
+
+### Update product
+PUT http://localhost:8080/api/products/PRODUCT_ID
+Content-Type: application/json
+
+{
+  "name": "New Keyboard",
+  "price": 65000,
+  "imageUrl": "https://example.com/kb-new.png"
+}
+
+### Add wish
+POST http://localhost:8080/api/wishes/PRODUCT_ID
+Authorization: Bearer TOKEN_HERE
+
+### View wishlist
+GET http://localhost:8080/api/wishes
+Authorization: Bearer TOKEN_HERE
+
+### Remove wish
+DELETE http://localhost:8080/api/wishes/PRODUCT_ID
+Authorization: Bearer TOKEN_HERE
+
+### Delete product
+DELETE http://localhost:8080/api/products/PRODUCT_ID
+
+### Verify deleted product is gone
+GET http://localhost:8080/api/products/PRODUCT_ID
