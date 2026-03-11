@@ -71,7 +71,7 @@ public class Member {
         if (exists) {
             throw new IllegalArgumentException("이미 위시리스트에 추가된 상품입니다.");
         }
-        Wish wish = new Wish(productId, wishedPrice);
+        Wish wish = new Wish(this.id, productId, wishedPrice);
         wishes.add(wish);
         return wish;
     }

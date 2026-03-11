@@ -90,7 +90,7 @@ class MemberTest {
     void 위시리스트는_불변_리스트를_반환한다() {
         Member member = new Member("test@test.com", "password");
 
-        assertThrows(UnsupportedOperationException.class,
-                () -> member.getWishes().add(new Wish(UUID.randomUUID(), 10000L)));
+        assertThrows(UnsupportedOperationException.class, () -> member.getWishes()
+                .add(new Wish(UUID.randomUUID(), UUID.randomUUID(), 10000L)));
     }
 }
