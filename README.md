@@ -1,6 +1,6 @@
 # Spring Shopping
 
-상품, 회원, 위시리스트 기능을 제공하는 멀티모듈 Spring Boot 애플리케이션
+상품, 회원, 위시리스트 기능을 제공하는 Spring Boot 애플리케이션
 
 ## 기술 스택
 
@@ -12,21 +12,19 @@
 - Thymeleaf (프론트엔드)
 - Cucumber 7.20.1 (BDD 테스트) + Spring REST Docs (API 문서)
 
-## 모듈 구조
+## 패키지 구조
 
 ```
-src/                        module-product/           module-member/
-├── controller/             ├── Product (@Entity)     ├── Member (@Document)
-├── dto/                    ├── ProductName           ├── Wish (embedded)
-├── config/                 ├── usecase/              ├── usecase/
-├── auth/                   ├── service/              ├── service/
-├── idempotency/            └── port/                 └── port/
-├── health/
-├── wish/
-└── page/
+shopping/
+├── product/          # 상품 (도메인, 서비스, 컨트롤러, DTO)
+├── member/           # 회원 (도메인, 서비스, 컨트롤러, DTO)
+├── wish/             # 위시리스트 (서비스, 컨트롤러, DTO)
+├── auth/             # 인증 (JWT 필터)
+├── config/           # Spring 설정, 글로벌 예외 처리
+├── idempotency/      # 멱등성 필터
+├── health/           # 헬스체크
+└── page/             # Thymeleaf 페이지
 ```
-
-`src/` → `module-product`, `module-member` 방향으로 의존. 모듈 간 직접 의존 없음.
 
 ## API
 
